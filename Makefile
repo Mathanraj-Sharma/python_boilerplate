@@ -48,14 +48,15 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint/flake8: ## check style with flake8
-	flake8 python_boilerplate tests
+	venv/bin/flake8 python_boilerplate tests
 lint/black: ## check style with black
-	black --check python_boilerplate tests
+	venv/bin/black --check python_boilerplate tests
 
 lint: lint/flake8 lint/black ## check style
 
 test: ## run tests quickly with the default Python
-	pytest
+	@test -d venv || $(MAKE) venv
+	venv/bin/python -m pytest --color=yes -s -v --show-capture=no --junit-xml=build/test-reports/h2o_autodoc-unit-test_$@.xml tests
 
 test-all: ## run tests on every Python version with tox
 	tox
@@ -78,12 +79,19 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 release: dist ## package and upload a release
-	twine upload dist/*
+	venv/bin/twine upload dist/*
 
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	venv/bin/python setup.py sdist
+	venv/bin/python setup.py bdist_wheel
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	venv/bin/python setup.py install
+
+clean_venv:
+	rm -r venv/
+
+venv: clean_venv
+	python -m venv venv/
+	venv/bin/pip install -r requirements_dev.txt
