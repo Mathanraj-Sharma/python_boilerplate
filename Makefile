@@ -56,7 +56,7 @@ lint: lint/flake8 lint/black ## check style
 
 test: ## run tests quickly with the default Python
 	@test -d venv || $(MAKE) venv
-	venv/bin/python -m pytest --color=yes -s -v --show-capture=no --junit-xml=build/test-reports/h2o_autodoc-unit-test_$@.xml tests
+	venv/bin/python -m pytest --color=yes -s -v --show-capture=no --junit-xml=build/test-reports/h2o_autodoc-unit-test_$@.xml tests ${ARGS}
 
 test-all: ## run tests on every Python version with tox
 	tox
