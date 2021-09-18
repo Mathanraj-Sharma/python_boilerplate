@@ -95,3 +95,4 @@ clean_venv:
 venv: clean_venv
 	python -m venv venv/
 	venv/bin/pip install -r requirements_dev.txt
+	venv/bin/pre-commit install --hook-type pre-commit --hook-type pre-push
